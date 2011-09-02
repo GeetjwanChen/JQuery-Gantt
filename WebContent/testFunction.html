@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+	<link rel="stylesheet" type="text/css" href="./lib/jquery-ui-1.8.4.css" />
+	<link rel="stylesheet" type="text/css" href="reset.css" />
+	<link rel="stylesheet" type="text/css" href="./lib/jquery.ganttView.css" />
+	<style type="text/css">
+		body {
+			font-family: tahoma, verdana, helvetica;
+			font-size: 0.8em;
+			padding: 10px;
+		}
+	</style>
+	<title>test</title>
+</head>
+<body>
+
+	<script type="text/javascript" src="./lib/jquery-1.4.2.js"></script>
+	<script type="text/javascript" src="./lib/date.js"></script>
+	<script type="text/javascript">
+	
+    function getPeriods(start, end) {
+        var dates = [];
+		dates[start.getFullYear()] = [];
+		dates[start.getFullYear()][start.getMonth()] = [];
+		dates[start.getFullYear()][start.getMonth()][start.getDate()] = [];
+		dates[start.getFullYear()][start.getMonth()][start.getDate()][start.getHours()] = [start];
+		var last = start;
+		while (last.compareTo(end) == -1) {
+			var next = last.clone().addMinutes(30);
+			if (!dates[next.getFullYear()]) { 
+				dates[next.getFullYear()] = []; 
+			}
+			if (!dates[next.getFullYear()][next.getMonth()]) { 
+				dates[next.getFullYear()][next.getMonth()] = []; 
+			}
+			if (!dates[next.getFullYear()][next.getMonth()][next.getDate()]) { 
+				dates[next.getFullYear()][next.getMonth()][next.getDate()] = []; 
+			}
+			if (!dates[next.getFullYear()][next.getMonth()][next.getDate()][next.getHours()]) { 
+				dates[next.getFullYear()][next.getMonth()][next.getDate()][next.getHours()] = []; 
+			}
+			dates[next.getFullYear()][next.getMonth()][next.getDate()][next.getHours()].push(next);
+			last = next;
+		}
+		return dates;
+    }
+    
+    
+    function minutesBetween (start, end) {
+  	  if (!start || !end) { return 0; }
+        start = Date.parse(start); end = Date.parse(end);
+        if (start.getYear() == 1901 || end.getYear() == 8099) { return 0; }
+        var count = 0, date = start.clone();
+        while (date.compareTo(end) == -1) { count = count + 1; date.addMinutes(30); }
+        return count;
+   }
+    
+    function getDates(start, end) {
+        var dates = [];
+		dates[start.getFullYear()] = [];
+		dates[start.getFullYear()][start.getMonth()] = [start]
+		var last = start;
+		while (last.compareTo(end) == -1) {
+			var next = last.clone().addDays(1);
+			if (!dates[next.getFullYear()]) { dates[next.getFullYear()] = []; }
+			if (!dates[next.getFullYear()][next.getMonth()]) { 
+				dates[next.getFullYear()][next.getMonth()] = []; 
+			}
+			dates[next.getFullYear()][next.getMonth()].push(next);
+			last = next;
+		}
+		return dates;
+    }
+  
+	</script>
+	
+	
+	
+	<script type="text/javascript">
+	var start = new Date();
+	var end = start.clone().addDays(1);
+	var dates = getPeriods(start, end);
+    var totalW = 0;
+    var t = 0;
+	for (var y in dates) {
+		t = t + 1;
+		for (var m in dates[y]) {
+			t = t + 1;
+			for (var d in dates[m]) {
+				t = t + 1;
+				var w = dates[y][m][d].length * 4 * cellWidth;
+				totalW = totalW + w;
+				for (var h in dates[y][m][d]) {
+					for (var minutes in dates[y][m][d][h]) {
+						t = t+1;
+					}
+				}
+			}
+		}
+	}
+	$(document).ready(function(){
+		  $("button").click(function(){
+		    $("p").html(totalW);
+		  });
+		});
+	</script>
+
+	<p>If you click on me, I will disappear.</p>
+	<button>Click me</button>
+</body>
+</html>
